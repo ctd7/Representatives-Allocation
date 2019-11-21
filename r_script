@@ -1,0 +1,74 @@
+# Estimated population for 2018 - Wikipedia
+pop = c(39557045,28701845,21299325,19542209,12807060,12741080,11689442,10519475,10383620,9995915,
+        8908520,8517685,7535591,7171646,6902149,6770010,6691878,6126452,6042718,5813568,5695564,5611179,
+        5084127,4887871,4659978,4468402,4190713,3943079,3572665,3161105,3156145,3034392,3013825,2986530,
+        2911505,2095428,1929268,1805832,1754208,1420491,1356458,1338404,1062305,1057315,967171,882235,760077,
+        737438,626299,577737)
+
+# The house seat allocation. Every state starts with one
+hs = rep(1,50)
+
+# The population/house seat and per house seat+1 to compare effects for all the states
+pop_hs = pop/hs
+pop_p1 = pop/(hs+1)
+
+# State order. Matches population above. Copied and pasted from another table for ease
+st = c("California","Texas","Florida","New York","Pennsylvania","Illinois","Ohio","Georgia",
+       "North Carolina","Michigan","New Jersey","Virginia","Washington","Arizona","Massachusetts",
+       "Tennessee","Indiana","Missouri","Maryland","Wisconsin","Colorado","Minnesota","South Carolina",
+       "Alabama","Louisiana","Kentucky","Oregon","Oklahoma","Connecticut","Utah","Iowa","Nevada",
+       "Arkansas","Mississippi","Kansas","New Mexico","Nebraska","West Virginia","Idaho","Hawaii",
+       "New Hampshire","Maine","Montana","Rhode Island","Delaware","South Dakota","North Dakota","Alaska",
+       "Vermont","Wyoming")
+
+#cmp = rep(NA,length(st))
+#for (i in 2:50) {
+#  cmp = rbind.data.frame(cmp,rep(NA,length(st)))
+#}
+
+#row.names(cmp) = st
+#colnames(cmp) = st
+
+# wn is vector indicating how many 'wins' each state gets in the following algorithim 
+wn = rep(0,50)
+# Number of seats left. 435 total
+sl = 435-sum(hs)
+
+# Algorithim in effect compares the consequences of adding the house seat to one state and how it alters the 
+# geometric mean of the population/ house state of all the other states. The wins indicate if adding one house seat to a
+# specific state has a greater effect than adding a house seat to another state. To clarification, adding a house seat
+# to Ohio reduces the population/house seat at the opportunity cost of reducing the population/house seat of another
+# state. Compares the geometric means of those iterations and determines which state has the largest effect by 
+# counting the number of wins.
+
+# While loop until all the seats are allocated.
+while (sl >0) {
+  wn = rep(0,50)
+  for (i in 1:50) {
+    # Variable to keep track of the wins during one step
+    wnt = 0
+    for (j in 1:50) {
+      if (i != j) { # No point in comparing a state versus itself
+        t1 = abs((pop_hs[j]-pop_p1[i])/pop_p1[i]) # Percentage change of Population/house seat by adding seat to state i 
+        t2 = abs((pop_hs[i]-pop_p1[j])/pop_p1[j]) # # Percentage change of Population/house seat by adding seat to state j
+        if (t1<t2) {wnt = wnt + 1} # Which one does it the most (lower number). Increase winning number. If the other state won, it will be counted in that states iteration
+      }
+    
+    }
+    wn[i] = wnt # Assigning it to the wins vecotr
+  }
+  t3 = which.max(wn) # state with the most ones gets the seat
+  hs[t3] = hs[t3]+1 # Adding appropiate seat and resetting all the iterative vectors
+  pop_hs = pop/hs
+  pop_p1 = pop/(hs+1)
+  sl = 435-sum(hs) # Reducing down seats left
+}
+
+# Representation after 2010 Census. Obtained from table to match the order above
+pr = c(53,36,27,27,18,18,16,14,13,14,12,11,10,9,9,9,9,8,8,8,7,8,7,7,6,6,5,5,5,4,4,4,4,
+       4,6,3,3,3,2,2,2,2,1,2,1,1,1,1,1,1) 
+
+# Bulding data frame for Viewing
+cmp = cbind.data.frame("State" = st,"Estimated Population" = pop,"House Seats" = hs, 
+                       "Population/House Seat" =pop/hs, "Previous House Seats" = pr, "Difference" = hs-pr)
+View(cmp)
