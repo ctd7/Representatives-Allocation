@@ -21,13 +21,6 @@ st = c("California","Texas","Florida","New York","Pennsylvania","Illinois","Ohio
        "New Hampshire","Maine","Montana","Rhode Island","Delaware","South Dakota","North Dakota","Alaska",
        "Vermont","Wyoming")
 
-#cmp = rep(NA,length(st))
-#for (i in 2:50) {
-#  cmp = rbind.data.frame(cmp,rep(NA,length(st)))
-#}
-
-#row.names(cmp) = st
-#colnames(cmp) = st
 
 # wn is vector indicating how many 'wins' each state gets in the following algorithim 
 wn = rep(0,50)
