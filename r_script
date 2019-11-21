@@ -65,3 +65,7 @@ pr = c(53,36,27,27,18,18,16,14,13,14,12,11,10,9,9,9,9,8,8,8,7,8,7,7,6,6,5,5,5,4,
 cmp = cbind.data.frame("State" = st,"Estimated Population" = pop,"House Seats" = hs, 
                        "Population/House Seat" =pop/hs, "Previous House Seats" = pr, "Difference" = hs-pr)
 View(cmp)
+
+cmp2 = cbind.data.frame("State" = cmp$State,"Estimated Population" = cmp$`Estimated Population`,
+        "House Seats" = cmp$`House Seats`,"Electoral College Votes"=hs+2,"Population/Electoral College Vote" = pop/(hs+2))
+cmp2 = cbind.date.frame(cmp2,"z-score Population/EC Vote" = ((cmp2[,5]-mean(cmp2[,5]))/sd(cmp2[,5])))
